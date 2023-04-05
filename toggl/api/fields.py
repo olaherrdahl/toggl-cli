@@ -159,6 +159,13 @@ class TogglField(typing.Generic[T]):
             raise exceptions.TogglException('Field \'{}.{}\' is already initiated!'
                                             .format(instance.__class__.__name__, self.name))
 
+        if value is None:
+            if not self.required:
+                self._set_value(instance, value)
+                return
+            else:
+                raise TypeError('Field \'{}\' is required! None value is not allowed!'.format(self.name))
+
         try:
             value = self.parse(value, instance)
         except ValueError:

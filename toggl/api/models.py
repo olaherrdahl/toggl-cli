@@ -153,31 +153,9 @@ class Project(WorkspacedEntity):
     Project entity
     """
 
-    name = fields.StringField(required=True)
-    """
-    Name of the project. (Required)
-    """
-
-    client = fields.MappingField(Client, 'cid')
-    """
-    Client associated to the project.
-    """
-
     active = fields.BooleanField(default=True)
     """
     Whether the project is archived or not. (Default: True)
-    """
-
-    is_private = fields.BooleanField(default=True)
-    """
-    Whether project is accessible for only project users or for all workspace users. (Default: True)
-    """
-
-    billable = fields.BooleanField(premium=True)
-    """
-    Whether the project is billable or not.
-
-    (Available only for Premium workspaces)
     """
 
     auto_estimates = fields.BooleanField(default=False, premium=True)
@@ -188,11 +166,16 @@ class Project(WorkspacedEntity):
     (Available only for Premium workspaces)
     """
 
-    estimated_hours = fields.IntegerField(default=0, premium=True)
+    billable = fields.BooleanField(premium=True)
     """
-    If auto_estimates is true then the sum of task estimations is returned, otherwise user inserted hours.
+    Whether the project is billable or not.
 
     (Available only for Premium workspaces)
+    """
+
+    client = fields.MappingField(Client, 'client_id')
+    """
+    Client associated to the project.
     """
 
     color = fields.StringField()
@@ -200,17 +183,53 @@ class Project(WorkspacedEntity):
     Id of the color selected for the project
     """
 
-    hex_color = fields.StringField()
+    currency = fields.StringField(premium=True)
     """
-    Hex code of the color selected for the project
+    Project currency, optional, premium feature
     """
 
-    rate = fields.FloatField(premium=True)
+    end_date = fields.StringField()
     """
-    Hourly rate of the project.
+    End date of a project timeframe.
+    """
+
+    estimated_hours = fields.IntegerField(default=0, premium=True)
+    """
+    If auto_estimates is true then the sum of task estimations is returned, otherwise user inserted hours.
 
     (Available only for Premium workspaces)
     """
+
+    fixed_fee = fields.FloatField(premium=True)
+    """
+    Project fixed fee, optional, premium feature
+    """
+
+    is_private = fields.BooleanField(default=True)
+    """
+    Whether project is accessible for only project users or for all workspace users. (Default: True)
+    """
+
+    name = fields.StringField(required=True)
+    """
+    Name of the project. (Required)
+    """
+
+    rate_change_mode = fields.StringField(premium=True)
+    """
+    Rate change mode, optional, premium feature. Can be "start-today", "override-current", "override-all"
+
+    (Available only for Premium workspaces)
+    """
+
+    # TODO: recurring_parameters
+
+    start_date = fields.StringField()
+    """
+    Start date of a project timeframe.
+    """
+
+    # TODO: template & template_id
 
     def add_user(self, user, manager=False, rate=None) :  # type: (User, bool, typing.Optional[float]) -> ProjectUser
         """
@@ -556,7 +575,7 @@ class TimeEntrySet(base.TogglSet):
     """
 
     def build_list_url(self, caller, config, conditions):  # type: (str, utils.Config, typing.Dict) -> str
-        url = '/{}'.format(self.base_url)
+        url = '/me/time_entries'
 
         if caller == 'filter':
             start = conditions.pop('start', None)
@@ -581,7 +600,7 @@ class TimeEntrySet(base.TogglSet):
         :return:
         """
         config = config or utils.Config.factory()
-        fetched_entity = utils.toggl('/time_entries/current', 'get', config=config)
+        fetched_entity = utils.toggl('/me/time_entries/current', 'get', config=config)
 
         if fetched_entity.get('data') is None:
             return None

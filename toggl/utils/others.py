@@ -165,6 +165,9 @@ def toggl(url, method, data=None, headers=None, config=None, address=None):
         try:
             logger.debug('Default workspace: {}'.format(config._default_workspace))
             response = _toggl_request(url, method, data, headers, config.get_auth())
+            if (len(response.content) < 2): # Ignore empty responses
+                logger.debug('Response StatusCode {}'.format(response.status_code))
+                return None
             response_json = response.json()
             logger.debug('Response {}:\n{}'.format(response.status_code, pformat(response_json)))
             return response_json

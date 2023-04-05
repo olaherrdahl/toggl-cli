@@ -145,6 +145,13 @@ class TogglSet(object):
         :param eid: ID of the entity to fetch.
         :param config: Config
         """
+
+        if (self.base_url == "clients"):
+            return f'/workspaces/{config.default_wid}/clients/{eid}'
+        
+        if (self.base_url == "projects"):
+            return f'/workspaces/{config.default_wid}/projects/{eid}'
+
         return '/{}/{}'.format(self.base_url, eid)
 
 
@@ -222,7 +229,7 @@ class TogglSet(object):
         Helper method that fetches all objects from given URL and deserialize them.
         """
         fetched_entities = utils.toggl(url, 'get', config=config)
-        
+
         if isinstance(fetched_entities, dict):
             fetched_entities = fetched_entities.get('data')
         

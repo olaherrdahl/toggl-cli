@@ -34,12 +34,12 @@ class TestProjects:
         assert result.obj.exit_code == 0
         assert Project.objects.get(result.created_id(), config=config).client == client
 
-        result = cmd('projects add --name \'{}\' --private --color 2'.format(fake.word()))
+        result = cmd('projects add --name \'{}\' --private --color #222222'.format(fake.word()))
         assert result.obj.exit_code == 0
 
         prj = Project.objects.get(result.created_id(), config=config)  # type: Project
         assert prj.is_private is True
-        assert prj.color == 2
+        assert prj.color == '#222222'
 
         with pytest.raises(exceptions.TogglPremiumException):
             cmd('projects add --name \'{}\' --billable'.format(fake.word()))
@@ -52,7 +52,7 @@ class TestProjects:
     def test_get(self, cmd, fake, factories):
         name = fake.word()
         client = factories.ClientFactory()
-        project = factories.ProjectFactory(name=name, is_private=False, color=2, client=client)
+        project = factories.ProjectFactory(name=name, is_private=False, color='#222222', client=client)
 
         result = cmd('projects get \'{}\''.format(project.id))
         id_parsed = result.parse_detail()
@@ -62,7 +62,7 @@ class TestProjects:
         assert id_parsed['auto_estimates'] == 'False'
         assert id_parsed['active'] == 'True'
         assert id_parsed['is_private'] == 'False'
-        assert id_parsed['color'] == '2'
+        assert id_parsed['color'] == '#222222'
         assert str(client.id) in id_parsed['client']
 
         result = cmd('projects get \'{}\''.format(name))
@@ -73,28 +73,28 @@ class TestProjects:
         assert name_parsed['auto_estimates'] == 'False'
         assert name_parsed['active'] == 'True'
         assert name_parsed['is_private'] == 'False'
-        assert name_parsed['color'] == '2'
+        assert name_parsed['color'] == '#222222'
         assert str(client.id) in name_parsed['client']
 
     def test_update(self, cmd, fake, config, factories):
         name = fake.name()
-        project = factories.ProjectFactory(name=name, is_private=False, color=2)
+        project = factories.ProjectFactory(name=name, is_private=False, color='#000000')
 
         new_name = fake.name()
         new_client = factories.ClientFactory()
-        result = cmd('projects update --name \'{}\' --client \'{}\' --private --color 1 \'{}\''.format(new_name, new_client.name, name))
+        result = cmd('projects update --name \'{}\' --client \'{}\' --private --color #000000 \'{}\''.format(new_name, new_client.name, name))
         assert result.obj.exit_code == 0
 
         project_obj = Project.objects.get(project.id, config=config)
         assert project_obj.name == new_name
         assert project_obj.client == new_client
-        assert project_obj.color == 1
+        assert project_obj.color == "#000000"
         assert project_obj.is_private is True
 
     @pytest.mark.premium
     def test_update_premium(self, cmd, fake, config, factories):
         name = fake.name()
-        project = factories.ProjectFactory(name=name, is_private=False, color=2)
+        project = factories.ProjectFactory(name=name, is_private=False, color='#000000')
 
         result = cmd('projects update --billable --rate 10.10  --auto-estimates \'{}\''.format(name))
         assert result.obj.exit_code == 0

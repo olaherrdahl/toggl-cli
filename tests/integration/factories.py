@@ -29,7 +29,6 @@ class ClientFactory(TogglFactory):
         model = api.Client
 
     name = factory.Faker('name')
-    notes = factory.Faker('sentence')
 
 
 class ProjectFactory(TogglFactory):
