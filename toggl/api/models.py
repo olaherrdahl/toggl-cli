@@ -166,7 +166,7 @@ class Project(WorkspacedEntity):
     (Available only for Premium workspaces)
     """
 
-    billable = fields.BooleanField(premium=True)
+    billable = fields.BooleanField(premium=True, default=False)
     """
     Whether the project is billable or not.
 
@@ -461,7 +461,7 @@ class Task(PremiumEntity):
     User to which the Task is assigned to.
     """
 
-    estimated_seconds = fields.IntegerField()
+    estimated_seconds = fields.IntegerField(default=0)
     """
     Estimated duration of task in seconds.
     """
@@ -475,6 +475,9 @@ class Task(PremiumEntity):
     """
     Total time tracked (in seconds) for the task.
     """
+
+    def get_url(self):  # type: () -> str
+        return f'workspaces/{self.workspace.id}/projects/{self.project.id}/tasks'
 
 
 class Tag(WorkspacedEntity):

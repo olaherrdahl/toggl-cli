@@ -1003,7 +1003,7 @@ def tasks(ctx, workspace):
 @tasks.command('add', short_help='create new task')
 @click.option('--name', '-n', prompt='Name of the task',
               help='Specifies the name of the task', )
-@click.option('--estimated_seconds', '-e', type=click.INT, help='Specifies estimated duration for the task in seconds')
+@click.option('--estimated_seconds', '-e', type=click.INT, default=0, help='Specifies estimated duration for the task in seconds')
 @click.option('--active/--no-active', default=True, help='Specifies whether the task is active', )
 @click.option('--project', '-o', prompt='Name or ID of project to have the task assigned to', envvar="TOGGL_PROJECT",
               type=types.ResourceType(api.Project),
@@ -1032,7 +1032,7 @@ def tasks_add(ctx, **kwargs):
 @tasks.command('update', short_help='update a task')
 @click.argument('spec')
 @click.option('--name', '-n', help='Specifies the name of the task', )
-@click.option('--estimated_seconds', '-e', type=click.INT, help='Specifies estimated duration for the task in seconds')
+@click.option('--estimated_seconds', '-e', type=click.INT, default=0, help='Specifies estimated duration for the task in seconds')
 @click.option('--active/--no-active', default=None, help='Specifies whether the task is active', )
 @click.option('--user', '-u', type=types.ResourceType(api.User, fields=('id', 'email')),
               help='Specifies a user to whom the task will be assigned. Can be ID or email of the user')

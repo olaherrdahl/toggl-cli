@@ -136,6 +136,7 @@ class TogglSet(object):
         :param conditions: If caller == 'filter' then contain conditions for filtering. Passed as reference,
         therefore any modifications will result modifications
         """
+
         return '/{}'.format(self.base_url)
 
     def build_detail_url(self, eid, config):  # type: (int, utils.Config) -> str
@@ -147,10 +148,10 @@ class TogglSet(object):
         """
 
         if (self.base_url == "clients"):
-            return f'/workspaces/{config.default_wid}/clients/{eid}'
+            return f'/workspaces/{config.default_workspace.id}/clients/{eid}'
         
         if (self.base_url == "projects"):
-            return f'/workspaces/{config.default_wid}/projects/{eid}'
+            return f'/workspaces/{config.default_workspace.id}/projects/{eid}'
 
         return '/{}/{}'.format(self.base_url, eid)
 
